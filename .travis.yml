@@ -9,4 +9,6 @@ matrix:
 install:
   - pip install pipenv
   - pipenv install --dev
+
+script:
   - make
