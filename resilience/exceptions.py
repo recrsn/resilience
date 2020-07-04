@@ -1,3 +1,9 @@
+"""
+Common exceptions for resilience
+"""
+
+
 class CallNotAllowedException(Exception):
-    def __init__(self, message):
-        super().__init__(message)
+    """
+    Raised when a call is not allowed
+    """

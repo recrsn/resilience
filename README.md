@@ -4,4 +4,4 @@ A Python library to develop resilient microservices
 
 ## Tests
 
-Run `make test`
+Run `make`

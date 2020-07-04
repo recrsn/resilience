@@ -2,9 +2,9 @@ from resilience.utils import RingBuffer
 
 
 def test_ring_buffer_keeps_last_n_contents():
-    n = 3
+    ring_buffer_size = 3
 
-    ring_buffer = RingBuffer(n)
+    ring_buffer = RingBuffer(ring_buffer_size)
 
     ring_buffer.add(1)
     ring_buffer.add(2)
@@ -15,9 +15,9 @@ def test_ring_buffer_keeps_last_n_contents():
 
 
 def test_ring_buffer_clear_clears_the_ring_buffer():
-    n = 3
+    ring_buffer_size = 3
 
-    ring_buffer = RingBuffer(n)
+    ring_buffer = RingBuffer(ring_buffer_size)
 
     ring_buffer.add(1)
     ring_buffer.add(2)

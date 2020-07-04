@@ -5,9 +5,9 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
-autopep8 = "*"
 pytest = "*"
 pytest-cov = "*"
+mypy = "*"
 
 [packages]
 
