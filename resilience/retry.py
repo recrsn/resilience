@@ -4,6 +4,7 @@ Retry
 import time
 from abc import ABC, abstractmethod
 from datetime import timedelta
+from enum import Enum
 from typing import List, Type
 
 
@@ -63,8 +64,12 @@ class ExponentialTimeInterval(TimeInterval):
         self.__sleeps += 1
 
 
-LINEAR = 'linear'
-EXPONENTIAL = 'exponential'
+class IntervalType(Enum):
+    """
+    Interval types
+    """
+    LINEAR = 'linear'
+    EXPONENTIAL = 'exponential'
 
 
 class Retry:
@@ -76,7 +81,7 @@ class Retry:
                  retriable_exceptions: List[Type[BaseException]],
                  attempts: int = 3,
                  interval: timedelta = timedelta(milliseconds=500),
-                 interval_type: str = LINEAR):
+                 interval_type: IntervalType = IntervalType.LINEAR):
         """
         Creates a new retry instance
         :param retriable_exceptions: List[BaseException] exceptions to retry for
@@ -88,7 +93,7 @@ class Retry:
         self.__attempts = attempts
         self.__interval = interval
 
-        if interval_type not in (LINEAR, EXPONENTIAL):
+        if interval_type not in (IntervalType.LINEAR, IntervalType.EXPONENTIAL):
             raise ValueError("Invalid interval type")
 
         self.__interval_type = interval_type
@@ -114,10 +119,10 @@ class Retry:
         return wrapped_func
 
     def __get_time_interval(self):  # pylint: disable=inconsistent-return-statements
-        if self.__interval_type == LINEAR:
+        if self.__interval_type == IntervalType.LINEAR:
             return LinearTimeInterval(self.__interval)
 
-        if self.__interval_type == EXPONENTIAL:
+        if self.__interval_type == IntervalType.EXPONENTIAL:
             return ExponentialTimeInterval(self.__interval)
 
         assert False  # pragma: no cover

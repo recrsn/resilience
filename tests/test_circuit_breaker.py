@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from resilience.circuit_breaker import CircuitBreaker, OPEN, HALF_OPEN, CLOSED
+from resilience.circuit_breaker import CircuitBreaker, CircuitBreakerState
 from resilience.exceptions import CallNotAllowedException
 
 
@@ -48,7 +48,7 @@ def test_circuit_breaker_transitions_to_open_state_after_errors_cross_threshold(
         except:
             pass
 
-    assert circuit_breaker.state == OPEN
+    assert circuit_breaker.state == CircuitBreakerState.OPEN
 
 
 def test_circuit_breaker_transitions_does_not_transition_to_open_state_on_ignored_exception():
@@ -65,7 +65,7 @@ def test_circuit_breaker_transitions_does_not_transition_to_open_state_on_ignore
         except:
             pass
 
-    assert circuit_breaker.state == CLOSED
+    assert circuit_breaker.state == CircuitBreakerState.CLOSED
 
 
 def test_calls_on_open_circuit_breaker_raises_call_not_permitted_exception():
@@ -101,11 +101,11 @@ def test_circuit_breaker_transitions_to_half_open_after_trip_duration():
         except:
             pass
 
-    assert circuit_breaker.state == OPEN
+    assert circuit_breaker.state == CircuitBreakerState.OPEN
 
     sleep(1)
 
-    assert circuit_breaker.state == HALF_OPEN
+    assert circuit_breaker.state == CircuitBreakerState.HALF_OPEN
 
 
 def test_circuit_breaker_transitions_to_open_on_failure_after_half_open():
@@ -122,18 +122,18 @@ def test_circuit_breaker_transitions_to_open_on_failure_after_half_open():
         except:
             pass
 
-    assert circuit_breaker.state == OPEN
+    assert circuit_breaker.state == CircuitBreakerState.OPEN
 
     sleep(1)
 
-    assert circuit_breaker.state == HALF_OPEN
+    assert circuit_breaker.state == CircuitBreakerState.HALF_OPEN
 
     try:
         decorated()
     except:
         pass
 
-    assert circuit_breaker.state == OPEN
+    assert circuit_breaker.state == CircuitBreakerState.OPEN
 
 
 def test_circuit_breaker_transitions_to_closed_on_no_failures_in_half_open():
@@ -151,20 +151,20 @@ def test_circuit_breaker_transitions_to_closed_on_no_failures_in_half_open():
         except:
             pass
 
-    assert circuit_breaker.state == OPEN
+    assert circuit_breaker.state == CircuitBreakerState.OPEN
 
     sleep(1)
 
-    assert circuit_breaker.state == HALF_OPEN
+    assert circuit_breaker.state == CircuitBreakerState.HALF_OPEN
 
     decorated(False)
 
-    assert circuit_breaker.state == HALF_OPEN
+    assert circuit_breaker.state == CircuitBreakerState.HALF_OPEN
 
     decorated(False)
     decorated(False)
 
-    assert circuit_breaker.state == CLOSED
+    assert circuit_breaker.state == CircuitBreakerState.CLOSED
 
 
 def test_setting_circuit_breaker_to_closed_resets_state():
@@ -184,13 +184,13 @@ def test_setting_circuit_breaker_to_closed_resets_state():
         except:
             pass
 
-    assert circuit_breaker.state == OPEN
+    assert circuit_breaker.state == CircuitBreakerState.OPEN
 
-    circuit_breaker.state = CLOSED
+    circuit_breaker.state = CircuitBreakerState.CLOSED
 
     try:
         decorated(True)
     except:
         pass
 
-    assert circuit_breaker.state == CLOSED
+    assert circuit_breaker.state == CircuitBreakerState.CLOSED

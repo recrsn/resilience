@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from resilience.retry import Retry, EXPONENTIAL
+from resilience.retry import Retry, IntervalType
 
 
 def test_retry_should_call_original_function():
@@ -73,7 +73,9 @@ def test_retry_should_retry_with_exponential_delay():
         raise ValueError("error")
 
     interval = timedelta(milliseconds=10)
-    retry = Retry(retriable_exceptions=[ValueError], interval=interval, interval_type=EXPONENTIAL)
+    retry = Retry(retriable_exceptions=[ValueError],
+                  interval=interval,
+                  interval_type=IntervalType.EXPONENTIAL)
     decorated = retry(failing_func)
 
     with pytest.raises(ValueError) as exception:
